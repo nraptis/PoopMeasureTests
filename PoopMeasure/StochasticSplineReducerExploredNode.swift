@@ -20,6 +20,4 @@ class StochasticSplineReducerExploredNode {
         }
         descendants.removeAll()
     }
-    
-    
 }

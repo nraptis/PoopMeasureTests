@@ -151,7 +151,6 @@ class StochasticSplineReducerPathTrench {
         
         for step in minimumStep...maximumStep {
             if step < pathLength {
-                
                 let wrappedIndex = wrapIndex(index: startIndex + step,
                                              pathLength: pathLength)
                 if isPossibleToPlaceNode(index: wrappedIndex,
@@ -180,11 +179,9 @@ class StochasticSplineReducerPathTrench {
         
         for step in minimumStep...maximumStep {
             if step < pathLength {
-                
                 let distanceToStartIndex = getDistanceToStartIndexMovingForward(index: index,
                                                                                 pathLength: pathLength)
                 if distanceToStartIndex >= step {
-                    
                     let wrappedIndex = wrapIndex(index: index + step,
                                                  pathLength: pathLength)
                     if isPossibleToPlaceNode(index: wrappedIndex,
@@ -192,7 +189,6 @@ class StochasticSplineReducerPathTrench {
                                              minimumStep: minimumStep,
                                              maximumStep: maximumStep) {
                         nodes[index].addLink(wrappedIndex)
-                        
                         build(index: wrappedIndex,
                               pathLength: pathLength,
                               minimumStep: minimumStep,
@@ -239,7 +235,5 @@ class StochasticSplineReducerPathTrench {
                                     result: &result)
             _ = temp.popLast()
         }
-        
     }
-    
 }

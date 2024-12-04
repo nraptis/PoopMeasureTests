@@ -81,7 +81,6 @@ class TrenchValidator {
         }
         
         let controlLinkSet = Set(links)
-        
         if controlLinkSet != nodeLinkSet {
             
             print("For trench, @ \(index).")

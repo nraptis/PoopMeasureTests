@@ -11,7 +11,160 @@ import Testing
 
 struct PathurTest {
     
+    func computeAllPaths(pathLength: Int,
+                         minimumStep: Int,
+                         maximumStep: Int) -> [[Int]] {
+        var result = [[Int]]()
+        for startIndex in 0..<maximumStep {
+            if startIndex < pathLength {
+                var temp = [Int]()
+                computeAllPathsHelper(index: startIndex,
+                                      distanceWalked: 0,
+                                      callDepth: 0,
+                                      startIndex: startIndex,
+                                      pathLength: pathLength,
+                                      minimumStep: minimumStep,
+                                      maximumStep: maximumStep,
+                                      temp: &temp,
+                                      result: &result)
+            }
+        }
+        return result
+    }
     
+    func computeAllPathsHelper(index: Int,
+                               distanceWalked: Int,
+                               callDepth: Int,
+                               startIndex: Int,
+                               pathLength: Int,
+                               minimumStep: Int,
+                               maximumStep: Int,
+                               temp: inout [Int],
+                               result: inout [[Int]]) {
+        
+        if index == startIndex && callDepth > 0 {
+            result.append(temp)
+            return
+        }
+        if distanceWalked >= pathLength {
+            return
+        }
+        
+        for step in minimumStep...maximumStep {
+            if step < pathLength {
+                
+                var nextIndex = index + step
+                if nextIndex >= pathLength {
+                    nextIndex -= pathLength
+                    if nextIndex > startIndex {
+                        // in this case, we went back past start...
+                        return
+                    }
+                }
+                temp.append(index)
+                
+                computeAllPathsHelper(index: nextIndex,
+                                      distanceWalked: distanceWalked + step,
+                                      callDepth: callDepth + 1,
+                                      startIndex: startIndex,
+                                      pathLength: pathLength,
+                                      minimumStep: minimumStep,
+                                      maximumStep: maximumStep,
+                                      temp: &temp,
+                                      result: &result)
+                _ = temp.popLast()
+            }
+        }
+    }
+    
+    @Test func testExceedingNumberOfTrials() {
+        
+        for test_loop in 0..<300000 {
+            
+            if (test_loop % 10_000) == 0 {
+                print("@@testExceedingNumberOfTrials #\(test_loop)")
+            }
+            
+            
+            let minimumStep = Int.random(in: 2...8)
+            let maximumStep = Int.random(in: minimumStep...14)
+            let pathLength = Int.random(in: minimumStep...20)
+            
+            let controlAllPaths = computeAllPaths(pathLength: pathLength,
+                                                  minimumStep: minimumStep,
+                                                  maximumStep: maximumStep)
+            
+            let chopper = StochasticSplineReducerPathChopper()
+            
+            if chopper.build(pathLength: pathLength,
+                             minimumStep: minimumStep,
+                             maximumStep: maximumStep) {
+                
+                if !PathurValidator.validateChopperAllPaths(chopper: chopper,
+                                                            paths: controlAllPaths) {
+                    #expect(Bool(false))
+                    return
+                }
+            } else {
+                if controlAllPaths.count > 0 {
+                    print("Expected more paths!")
+                    print("\(controlAllPaths[0]) for example.")
+                    print("We got 0 paths...")
+                    #expect(Bool(false))
+                    return
+                }
+            }
+
+            if !PathurValidator.validateChopperPathsInternalConsistency(chopper: chopper) {
+                #expect(Bool(false))
+                return
+            }
+        }
+    }
+    
+    @Test func testManySmallTrials() {
+        
+        for test_loop in 0..<300000 {
+            
+            if (test_loop % 10_000) == 0 {
+                print("@@testManySmallTrials #\(test_loop)")
+            }
+            
+            let minimumStep = Int.random(in: 2...4)
+            let maximumStep = Int.random(in: minimumStep...6)
+            let pathLength = Int.random(in: minimumStep...12)
+            
+            let controlAllPaths = computeAllPaths(pathLength: pathLength,
+                                                  minimumStep: minimumStep,
+                                                  maximumStep: maximumStep)
+            
+            let chopper = StochasticSplineReducerPathChopper()
+            
+            if chopper.build(pathLength: pathLength,
+                             minimumStep: minimumStep,
+                             maximumStep: maximumStep) {
+                
+                if !PathurValidator.validateChopperAllPaths(chopper: chopper,
+                                                            paths: controlAllPaths) {
+                    #expect(Bool(false))
+                    return
+                }
+            } else {
+                if controlAllPaths.count > 0 {
+                    print("Expected more paths!")
+                    print("\(controlAllPaths[0]) for example.")
+                    print("We got 0 paths...")
+                    #expect(Bool(false))
+                    return
+                }
+            }
+
+            if !PathurValidator.validateChopperPathsInternalConsistency(chopper: chopper) {
+                #expect(Bool(false))
+                return
+            }
+        }
+    }
     
     @Test func testManualCaseD() {
         
@@ -95,7 +248,6 @@ struct PathurTest {
             return
         }
     }
-    
     
     @Test func testManualCaseB() {
         

@@ -9,9 +9,8 @@ import Foundation
 
 class StochasticSplineReducerPathChopper {
 
-    static let maxMaximumStep = 8
+    static let maxMaximumStep = 20
     static let minMinimumStep = 2
-    
     
     let trenches: [StochasticSplineReducerPathTrench]
     init() {
@@ -105,7 +104,6 @@ class StochasticSplineReducerPathChopper {
                 if !trenches[startIndex].build(pathLength: pathLength,
                                                minimumStep: minimumStep,
                                                maximumStep: maximumStep) {
-                    print("trench \(startIndex) failed...")
                     return false
                 }
             }
