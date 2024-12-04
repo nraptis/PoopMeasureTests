@@ -149,6 +149,7 @@ class StochasticSplineReducerPathTrench {
             return false
         }
         
+        var isAnyLinkFound = false
         for step in minimumStep...maximumStep {
             if step < pathLength {
                 let wrappedIndex = wrapIndex(index: startIndex + step,
@@ -157,6 +158,7 @@ class StochasticSplineReducerPathTrench {
                                          pathLength: pathLength,
                                          minimumStep: minimumStep,
                                          maximumStep: maximumStep) {
+                    isAnyLinkFound = true
                     nodes[startIndex].addLink(wrappedIndex)
                     build(index: wrappedIndex,
                           pathLength: pathLength,
@@ -165,7 +167,7 @@ class StochasticSplineReducerPathTrench {
                 }
             }
         }
-        return true
+        return isAnyLinkFound
     }
     
     private func build(index: Int,

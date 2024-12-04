@@ -12,6 +12,7 @@ class StochasticSplineReducerPathChopper {
     static let maxMaximumStep = 20
     static let minMinimumStep = 2
     
+    var trenchCount = 0
     let trenches: [StochasticSplineReducerPathTrench]
     init() {
         var _trenches = [StochasticSplineReducerPathTrench]()
@@ -29,62 +30,14 @@ class StochasticSplineReducerPathChopper {
         
     }
     
-    // Example. minimumStep = 2, maximumStep = 2
-    // Input: [0, 1, 2, 3, 4, 5]
-    // Output: [0, 2, 4]
-    // Output: [1, 3, 5]
-    
-    // Example. minimumStep = 2, maximumStep = 2
-    // Input: [0, 1, 2, 3, 4, 5, 6]
-    // Output: Invalid.
-    
-    
-    // Example. minimumStep = 2, maximumStep = 3
-    // Input: [0, 1, 2, 3, 4, 5]
-    // Output: [0, 2, 4]
-    // Output: [1, 3, 5]
-    
-    
-    
-    
-    
-    // Example. minimumStep = 2, maximumStep = 3
-    // Input: [0, 1, 2, 3, 4, 5, 6]
-    
-    // Output A: [0, 2, 4]
-    // Output B: [0, 2, 5]
-    // Output C: [0, 3, 5]
-    // Output D: [1, 3, 5]
-    // Output E: [1, 3, 6]
-    // Output F: [1, 4, 6]
-    // Output G: [2, 4, 6]
-    //
-    // (Note: These loop back around,
-    // but for statistical reasons,
-    // we should include these cases...)
-    //
-    // Output H: [2, 4, 0]
-    // Output I: [2, 5, 0]
-    
-    
-    // Output Starting At 0:
-    
-    
-    
-    // From 0, we can go to 2 or 3
-    
-    // Output 1: [0, 2, 4]
-    
-    
     // the assumption here is that
     // our path loops back to the start.
-    // min step = 2 =>
-    // [start] [e][end] [start (looping)]
     func build(pathLength: Int,
                minimumStep: Int,
                maximumStep: Int) -> Bool {
         
         if pathLength < minimumStep {
+            trenchCount = 0
             return false
         }
         if minimumStep < StochasticSplineReducerPathChopper.minMinimumStep {
@@ -104,12 +57,44 @@ class StochasticSplineReducerPathChopper {
                 if !trenches[startIndex].build(pathLength: pathLength,
                                                minimumStep: minimumStep,
                                                maximumStep: maximumStep) {
+                    trenchCount = 0
                     return false
                 }
             }
         }
-        
+        trenchCount = min(maximumStep, pathLength)
         return true
+    }
+    
+    var path = [Int]()
+    var pathCount = 0
+    
+    func pathAdd(number: Int) {
+        while path.count <= pathCount {
+            path.append(number)
+        }
+        path[pathCount] = number
+        pathCount += 1
+    }
+    
+    func solve() {
+        pathCount = 0
+        if trenchCount > 0 {
+            let trenchIndex = Int.random(in: 0..<trenchCount)
+            let trench = trenches[trenchIndex]
+            var node = trench.nodes[trench.startIndex]
+            if node.linkCount <= 0 { return }
+            var linkIndex = Int.random(in: 0..<node.linkCount)
+            var link = node.links[linkIndex]
+            pathAdd(number: trench.startIndex)
+            while link != trench.startIndex {
+                node = trench.nodes[link]
+                if node.linkCount <= 0 { return }
+                pathAdd(number: link)
+                linkIndex = Int.random(in: 0..<node.linkCount)
+                link = node.links[linkIndex]
+            }
+        }
     }
     
 }

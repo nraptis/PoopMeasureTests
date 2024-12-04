@@ -15,7 +15,6 @@ class TrenchValidator {
                                        paths: [[Int]]) -> Bool {
         
         let trenchPaths = trench.convertToAllPaths()
-        
         let pathSetControl = Set(paths)
         let pathSetTest = Set(trenchPaths)
         

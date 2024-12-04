@@ -72,6 +72,13 @@ class PathurValidator {
             index1 += 1
         }
         
+        if chopper.trenchCount != trenchPathsGrid.count {
+            print("The trenchCount is not consistent!")
+            print("chopper.trenchCount = \(chopper.trenchCount)")
+            print("trenchPathsGrid.count = \(trenchPathsGrid.count)")
+            #expect(Bool(false))
+            return false
+        }
         
         return true
     }
